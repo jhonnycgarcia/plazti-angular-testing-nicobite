@@ -30,3 +30,6 @@ To get more help on the Angular CLI use `ng help` or go check out the [Angular C
 dist/store/browser/*
 
 
+## Recursos
+- angular jest builder: https://github.com/just-jeb/angular-builders/tree/master/packages/jest
+- 
