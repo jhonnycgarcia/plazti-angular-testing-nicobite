@@ -37,3 +37,4 @@ dist/store/browser/*
 - comandos:
   - `ng test --coverage`
   - `ng test -t CartService --coverage`
+  - `ng test -t ProductService --coverage`
