@@ -33,3 +33,6 @@ dist/store/browser/*
 ## Recursos
 - angular jest builder: https://github.com/just-jeb/angular-builders/tree/master/packages/jest
 - spectator: https://www.npmjs.com/package/@ngneat/spectator
+- comandos:
+  - `ng test --coverage`
+  - `ng test -t CartService --coverage`
