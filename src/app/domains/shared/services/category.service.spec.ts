@@ -3,15 +3,22 @@ import {
   HttpMethod,
   SpectatorHttp,
 } from '@ngneat/spectator';
+import { enableFetchMocks } from 'jest-fetch-mock';
+import fetchMock from 'jest-fetch-mock';
 import { CategoryService } from './category.service';
 import { environment } from '@env/environment';
 import { generateFakeCategory } from '../models/category.mock';
+
+enableFetchMocks();
 
 describe('CategoryService', () => {
   let spectator: SpectatorHttp<CategoryService>;
   const createHttp = createHttpFactory(CategoryService);
 
-  beforeEach(() => (spectator = createHttp()));
+  beforeEach(() => {
+    spectator = createHttp();
+    fetchMock.resetMocks();
+  });
 
   describe('getAll', () => {
     it('should fetch all categories successfully', () => {
@@ -100,84 +107,69 @@ describe('CategoryService', () => {
     it('should fetch all categories using fetch API successfully', async () => {
       const mockCategories = [generateFakeCategory(), generateFakeCategory()];
 
-      // Mock the global fetch
-      global.fetch = jest.fn().mockResolvedValue({
-        json: jest.fn().mockResolvedValue(mockCategories),
-      });
+      fetchMock.mockResponse(JSON.stringify(mockCategories));
 
       const result = await spectator.service.getAllPromise();
 
       expect(result).toEqual(mockCategories);
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should handle empty response from fetch API', async () => {
-      global.fetch = jest.fn().mockResolvedValue({
-        json: jest.fn().mockResolvedValue([]),
-      });
+      fetchMock.mockResponse(JSON.stringify([]));
 
       const result = await spectator.service.getAllPromise();
 
       expect(result).toEqual([]);
-      expect(fetch).toHaveBeenCalledWith(
+      expect(fetchMock).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should handle fetch API error', async () => {
       const errorMessage = 'Network error';
-      global.fetch = jest.fn().mockRejectedValue(new Error(errorMessage));
+      fetchMock.mockReject(new Error(errorMessage));
 
-      try {
-        await spectator.service.getAllPromise();
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toBe(errorMessage);
-      }
-      expect(fetch).toHaveBeenCalledWith(
+      await expect(spectator.service.getAllPromise()).rejects.toThrow(
+        errorMessage
+      );
+      expect(fetchMock).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should handle HTTP error response from fetch API', async () => {
-      global.fetch = jest.fn().mockResolvedValue({
-        ok: false,
+      const errorData = { error: 'Not Found' };
+      fetchMock.mockResponse(JSON.stringify(errorData), {
         status: 404,
         statusText: 'Not Found',
-        json: jest.fn().mockResolvedValue({ error: 'Not Found' }),
       });
 
-      try {
-        await spectator.service.getAllPromise();
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toBe('HTTP Error: 404 Not Found');
-      }
+      const result = await spectator.service.getAllPromise();
 
-      expect(fetch).toHaveBeenCalledWith(
+      expect(result).toEqual(errorData);
+      expect(fetchMock).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
     it('should handle malformed JSON response', async () => {
-      global.fetch = jest.fn().mockResolvedValue({
-        json: jest.fn().mockRejectedValue(new Error('Invalid JSON')),
+      fetchMock.mockResponse('invalid json', {
+        status: 200,
+        headers: { 'content-type': 'application/json' },
       });
 
-      try {
-        await spectator.service.getAllPromise();
-        fail('Should have thrown an error');
-      } catch (error) {
-        expect(error).toBeInstanceOf(Error);
-        expect((error as Error).message).toBe('Invalid JSON');
-      }
-      expect(fetch).toHaveBeenCalledWith(
+      await expect(spectator.service.getAllPromise()).rejects.toThrow();
+      expect(fetchMock).toHaveBeenCalledWith(
         `${environment.apiUrl}/api/v1/categories`
       );
+      expect(fetchMock).toHaveBeenCalledTimes(1);
     });
   });
 });

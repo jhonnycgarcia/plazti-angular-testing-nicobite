@@ -34,6 +34,7 @@ dist/store/browser/*
 - angular jest builder: https://github.com/just-jeb/angular-builders/tree/master/packages/jest
 - spectator: https://www.npmjs.com/package/@ngneat/spectator
 - faker.js: https://fakerjs.dev/
+- jest-fetch-mock: https://www.npmjs.com/package/jest-fetch-mock
 - comandos:
   - `ng test --coverage`
   - `ng test -t CartService --coverage`
