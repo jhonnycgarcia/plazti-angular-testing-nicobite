@@ -5,7 +5,7 @@ import {
 } from '@ngneat/spectator';
 import { ProductService } from './product.service';
 import { environment } from '@env/environment';
-import { generateFakeProduct } from './product.mock';
+import { generateFakeProduct } from '../models/product.mock';
 
 describe('ProductService', () => {
   let spectator: SpectatorHttp<ProductService>;

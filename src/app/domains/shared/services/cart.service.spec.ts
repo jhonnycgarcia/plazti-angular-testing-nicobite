@@ -1,6 +1,6 @@
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator';
 import { CartService } from './cart.service';
-import { generateFakeProduct } from './product.mock';
+import { generateFakeProduct } from '../models/product.mock';
 
 describe('CartService', () => {
   let spectator: SpectatorService<CartService>;
