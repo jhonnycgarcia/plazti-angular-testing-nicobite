@@ -11,6 +11,7 @@ import { generateFakeProduct } from '@shared/models/product.mock';
 import { of } from 'rxjs';
 import { DeferBlockBehavior } from '@angular/core/testing';
 import { RelatedComponent } from '@products/components/related/related.component';
+import { faker } from '@faker-js/faker/.';
 
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
@@ -29,7 +30,9 @@ Object.defineProperty(window, 'IntersectionObserver', {
 describe('ProductDetailComponent', () => {
   let spectator: SpectatorRouting<ProductDetailComponent>;
   let productService: SpyObject<ProductService>;
-  const mockProduct = generateFakeProduct();
+  const mockProduct = generateFakeProduct({
+    images: Array.from({ length: 4 }, () => faker.image.url()),
+  });
 
   const createComponent = createRoutingFactory({
     component: ProductDetailComponent,
@@ -78,5 +81,23 @@ describe('ProductDetailComponent', () => {
 
     const relatedProducts = spectator.query(RelatedComponent);
     expect(relatedProducts).toBeTruthy();
+  });
+
+  it('should render all images in the gallery', () => {
+    spectator.detectChanges();
+    const gallery = spectator.query<HTMLDivElement>(byTestId('gallery'));
+    const images = gallery?.querySelectorAll<HTMLImageElement>('img');
+    expect(images).toHaveLength(mockProduct.images.length);
+  });
+
+  it('should change the cover when the user clicks on an image', () => {
+    spectator.detectChanges();
+    const gallery = spectator.query<HTMLDivElement>(byTestId('gallery'));
+    const images = gallery?.querySelectorAll<HTMLImageElement>('img');
+    const imageToChange = images![1];
+
+    spectator.click(imageToChange);
+    spectator.detectChanges();
+    expect(spectator.component.$cover()).toBe(imageToChange.src);
   });
 });
