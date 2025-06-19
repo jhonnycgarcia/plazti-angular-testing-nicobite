@@ -3,6 +3,7 @@
     <div class="flex items-center">
       <button
         (click)="toggleMenu()"
+        data-testid="menu-button"
         data-collapse-toggle="navbar-default"
         type="button"
         class="mr-4 inline-flex items-center p-2 w-10 h-10 justify-center text-sm text-gray-500 rounded-lg md:hidden hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-200"
@@ -23,17 +24,19 @@
             d="M1 1h15M1 7h15M1 13h15" />
         </svg>
       </button>
-      <a href="/" class="flex items-center mr-10">
-        <img src="/assets/logo.png" class="h-10" alt="NgStore" />
-        <span class="self-center text-xl font-semibold whitespace-nowrap"
+      <a href="/" class="flex items-center mr-10" data-testid="logo-link">
+        <img src="/assets/logo.png" class="h-10" alt="NgStore" data-testid="logo-image" />
+        <span class="self-center text-xl font-semibold whitespace-nowrap" data-testid="brand-name"
           >NgStore</span
         >
       </a>
       <div
         class="flex-col items-center border rounded-lg absolute top-16 left-3 bg-white p-4 md:relative md:top-0 md:left-0 md:flex md:flex-row md:space-x-4 md:border-none md:p-0"
-        [class.hidden]="!showMenu()">
+        [class.hidden]="!showMenu()"
+        data-testid="mobile-menu">
         <ul
-          class="flex flex-col space-y-4 mb-4 md:flex-row md:space-y-0 md:space-x-4 md:mb-0">
+          class="flex flex-col space-y-4 mb-4 md:flex-row md:space-y-0 md:space-x-4 md:mb-0"
+          data-testid="navigation-links">
           <li>
             <a
               routerLink="/"
@@ -41,6 +44,7 @@
               [routerLinkActiveOptions]="{ exact: true }"
               class="block hover:underline"
               aria-current="page"
+              data-testid="nav-home"
               >Home</a
             >
           </li>
@@ -49,6 +53,7 @@
               routerLink="/about"
               routerLinkActive="underline"
               class="block hover:underline"
+              data-testid="nav-about"
               >About</a
             >
           </li>
@@ -57,6 +62,7 @@
               routerLink="/locations"
               routerLinkActive="underline"
               class="block hover:underline"
+              data-testid="nav-locations"
               >Locations</a
             >
           </li>
@@ -65,17 +71,22 @@
               routerLink="/services"
               routerLinkActive="underline"
               class="block hover:underline"
+              data-testid="nav-services"
               >Services</a
             >
           </li>
         </ul>
-        <app-search />
+        <app-search data-testid="search-component" />
       </div>
     </div>
     <div class="flex items-center">
-      <button class="p-2 border rounded relative" (click)="toogleSideMenu()">
+      <button
+        data-testid="cart-button"
+        class="p-2 border rounded relative"
+        (click)="toogleSideMenu()">
         <div
-          class="absolute -top-2 -left-2 rounded h-5 w-5 bg-black text-white text-xs">
+          class="absolute -top-2 -left-2 rounded h-5 w-5 bg-black text-white text-xs"
+          data-testid="cart-count">
           {{ cart().length }}
         </div>
         <svg
@@ -97,10 +108,11 @@
 
 <div
   class="fixed border-l-4 top-0 right-0 bg-red z-40 w-72 h-screen p-4 overflow-y-auto transition-transform bg-white"
-  [class.translate-x-full]="hideSideMenu()">
+  [class.translate-x-full]="hideSideMenu()"
+  data-testid="side-menu">
   <div class="flex justify-between items-center">
-    <p class="text-xl">My Cart</p>
-    <button (click)="toogleSideMenu()">
+    <p data-testid="cart-title" class="text-xl">My Cart</p>
+    <button data-testid="close-cart-button" (click)="toogleSideMenu()">
       <svg
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
@@ -115,21 +127,22 @@
       </svg>
     </button>
   </div>
-  <div class="pt-4 flex flex-col">
+  <div class="pt-4 flex flex-col" data-testid="cart-items">
     @for (product of cart(); track product) {
-      <div class="flex justify-between items-center space-y-2">
+      <div class="flex justify-between items-center space-y-2" data-testid="cart-item">
         <div class="flex space-x-2 items-center">
           <img
             class="w-6 h-6"
             [src]="product.images[0]"
-            [alt]="product.title" />
-          <h3>{{ product.title }}</h3>
+            [alt]="product.title"
+            data-testid="product-image" />
+          <h3 data-testid="product-title">{{ product.title }}</h3>
         </div>
-        <p>{{ product.price }}</p>
+        <p data-testid="product-price">{{ product.price }}</p>
       </div>
     }
     <div>
-      <p>Total: {{ total() }}</p>
+      <p data-testid="cart-total">Total: {{ total() }}</p>
     </div>
   </div>
 </div>
