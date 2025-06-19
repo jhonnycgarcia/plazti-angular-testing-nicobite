@@ -42,6 +42,7 @@ dist/store/browser/*
   - `ng test -t CategoryService --coverage`
   - `ng test -t ProductComponent --coverage`
   - `ng test -t HeaderComponent --coverage`
+  - `ng test -t ProductDetailComponent --coverage`
 - Promp:
   - "Generate unit test for $service. Validate bot success and failure, and include edge cases. To create proper tests, use the product.servie.spect.ts dile as a guide and Spectator and Jest"
   - "Generate unit test for $component. Validate bot success and failure, and include edge cases. To create proper test, use the current spec code as a guide and Spectator and Jest"
